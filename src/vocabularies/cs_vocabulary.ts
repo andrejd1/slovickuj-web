@@ -1,4 +1,4 @@
-const CZECH_VOCABULARY = [
+export const CZECH_VOCABULARY = [
   "Aarhus",
   "abakus",
   "abatyše",
