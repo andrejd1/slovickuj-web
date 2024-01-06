@@ -9,15 +9,21 @@ const Card = ({
   onDragEnd,
 }: CardProps) => {
   const handleMouseDown = () => {
-    onDragStart(letter);
+    if (onDragStart) {
+      onDragStart(letter);
+    }
   };
 
   const handleMouseOver = () => {
-    onDragOver(letter);
+    if (onDragOver) {
+      onDragOver(letter);
+    }
   };
 
   const handleMouseUp = () => {
-    onDragEnd();
+    if (onDragEnd) {
+      onDragEnd();
+    }
   };
 
   return (
