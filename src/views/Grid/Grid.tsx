@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyledGrid, StyledGridRow } from "./Grid.styles.ts";
 import Card from "../../components/Card/Card.tsx";
-import { generateColorMap, generateGrid } from "../../utils/generators.ts";
+import {calculateScore, generateColorMap, generateGrid} from "../../utils/generators.ts";
 import { CZECH_VOCABULARY } from "../../vocabularies/cs_vocabulary.ts";
 import Board from "../../components/Board/Board.tsx";
 
@@ -31,7 +31,7 @@ const Grid: React.FC = () => {
       setUsedWords([...usedWords, findWord]);
       const findUsedWord = usedWords.find((word) => word === findWord);
       if (!findUsedWord) {
-        setScore((prev) => prev + findWord.length);
+        setScore((prev) => prev + calculateScore(findWord));
       }
     } else {
       console.log(draggedLetters.join());

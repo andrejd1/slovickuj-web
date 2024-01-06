@@ -1,6 +1,7 @@
-import { CardProps } from "../components/Card/Card.types.ts";
-import { CZECH_ALPHABET } from "../alphabet/cs_alphabet.ts";
-import { CARD_COLOURS } from "./colors.ts";
+import {CardProps} from "../components/Card/Card.types.ts";
+import {CZECH_ALPHABET} from "../alphabet/cs_alphabet.ts";
+import {CARD_COLOURS} from "./colors.ts";
+import {czechLetterScores} from "../alphabet/cs_alphabet_score.ts";
 
 export const generateRandomLetter = (alphabet: string) => {
   return alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -49,3 +50,10 @@ export const generateGrid = (colorMap: {
 
   return grid;
 };
+
+export const calculateScore = (word: string): number => {
+  return word
+    .toUpperCase()
+    .split('')
+    .reduce((score, letter) => score + (czechLetterScores[letter] || 0), 0);
+}
