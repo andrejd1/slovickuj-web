@@ -1,19 +1,25 @@
 import React from "react";
-import { StyledGrid, StyledGridRow } from "./Grid.styles.ts";
+import {
+  StyledGrid,
+  StyledGridContainer,
+  StyledGridRow,
+} from "./Grid.styles.ts";
 import Card from "../../components/Card/Card.tsx";
 import { calculateScore } from "../../utils/generators.ts";
 import { CZECH_VOCABULARY } from "../../vocabularies/cs_vocabulary.ts";
 import Board from "../../components/Board/Board.tsx";
 import { state$ } from "../../store/store.ts";
+import WordsTable from "../../components/TableWord/WordsTable.tsx";
+import { getUniqueElementsFromArrays } from "../../utils/helpers.ts";
+
+const cards = state$.actions.cards;
+const draggedLetters = state$.actions.draggedLetters;
+const usedWords = state$.actions.usedWords;
+const allWords = state$.actions.allWords;
+const score = state$.actions.score;
+const lastScoreIncrement = state$.actions.lastScoreIncrement;
 
 const Grid: React.FC = () => {
-  const cards = state$.actions.cards;
-  const draggedLetters = state$.actions.draggedLetters;
-  const usedWords = state$.actions.usedWords;
-  const allWords = state$.actions.allWords;
-  const score = state$.actions.score;
-  const lastScoreIncrement = state$.actions.lastScoreIncrement;
-
   const handleDragStart = (letter: string) => {
     draggedLetters.set([letter]);
   };
@@ -28,12 +34,13 @@ const Grid: React.FC = () => {
     const findWord = CZECH_VOCABULARY.find(
       (word) => word.toUpperCase() === draggedLetters.peek().join(""),
     );
+
     if (findWord) {
       const findUsedWord = usedWords
         .peek()
-        .find((word) => word.toUpperCase() === draggedLetters.peek().join(""));
+        .find((word) => word === draggedLetters.peek().join(""));
       if (findUsedWord === undefined) {
-        usedWords.set([...usedWords.get(), findWord]);
+        usedWords.set([...usedWords.get(), findWord.toUpperCase()]);
         lastScoreIncrement.set(calculateScore(findWord));
         score.set((prev) => prev + calculateScore(findWord));
       }
@@ -61,24 +68,32 @@ const Grid: React.FC = () => {
   return (
     <>
       <Board />
-      <StyledGrid onMouseLeave={resetDraggedLetters}>
-        {cards.get().map((row, rowIndex) => (
-          <StyledGridRow key={`rowIndex-${rowIndex}`}>
-            {row.map((card) => (
-              <Card
-                key={`cardIndex-${card.id}`}
-                id={card.id}
-                color={card.color}
-                letter={card.letter}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
-                onCardDragStart={() => handleCardDragStart(card.letter)}
-              />
-            ))}
-          </StyledGridRow>
-        ))}
-      </StyledGrid>
+      <StyledGridContainer>
+        <WordsTable
+          title={"Nevalidní slova"}
+          words={getUniqueElementsFromArrays(usedWords.get(), allWords.get())}
+          wordsColor={"red"}
+        />
+        <StyledGrid onMouseLeave={resetDraggedLetters}>
+          {cards.get().map((row, rowIndex) => (
+            <StyledGridRow key={`rowIndex-${rowIndex}`}>
+              {row.map((card) => (
+                <Card
+                  key={`cardIndex-${card.id}`}
+                  id={card.id}
+                  color={card.color}
+                  letter={card.letter}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDragEnd={handleDragEnd}
+                  onCardDragStart={() => handleCardDragStart(card.letter)}
+                />
+              ))}
+            </StyledGridRow>
+          ))}
+        </StyledGrid>
+        <WordsTable title={"Validní slova"} words={usedWords.get()} />
+      </StyledGridContainer>
     </>
   );
 };
