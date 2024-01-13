@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { StyledGrid, StyledGridRow } from "./Grid.styles.ts";
+import React, {useEffect, useState} from "react";
+import {StyledGrid, StyledGridRow} from "./Grid.styles.ts";
 import Card from "../../components/Card/Card.tsx";
 import {calculateScore, generateColorMap, generateGrid} from "../../utils/generators.ts";
-import { CZECH_VOCABULARY } from "../../vocabularies/cs_vocabulary.ts";
+import {CZECH_VOCABULARY} from "../../vocabularies/cs_vocabulary.ts";
 import Board from "../../components/Board/Board.tsx";
 
 const colorMap = generateColorMap();
@@ -12,7 +12,6 @@ const Grid: React.FC = () => {
   const [draggedLetters, setDraggedLetters] = useState<string[]>([]);
   const [usedWords, setUsedWords] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
-  const gridRef = useRef<HTMLDivElement | null>(null)
 
   const handleDragStart = (letter: string) => {
     setDraggedLetters([letter]);
@@ -51,7 +50,7 @@ const Grid: React.FC = () => {
   return (
     <>
       <Board word={draggedLetters.join("")} score={score} />
-      <StyledGrid ref={gridRef} onMouseLeave={resetDraggedLetters}>
+      <StyledGrid onMouseLeave={resetDraggedLetters}>
         {cards.map((row, rowIndex) => (
           <StyledGridRow key={`rowIndex-${rowIndex}`}>
             {row.map((card) => (
