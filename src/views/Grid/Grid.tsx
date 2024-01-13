@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StyledGrid, StyledGridRow } from "./Grid.styles.ts";
 import Card from "../../components/Card/Card.tsx";
 import {calculateScore, generateColorMap, generateGrid} from "../../utils/generators.ts";
@@ -12,6 +12,7 @@ const Grid: React.FC = () => {
   const [draggedLetters, setDraggedLetters] = useState<string[]>([]);
   const [usedWords, setUsedWords] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
+  const gridRef = useRef<HTMLDivElement | null>(null)
 
   const handleDragStart = (letter: string) => {
     setDraggedLetters([letter]);
@@ -38,6 +39,10 @@ const Grid: React.FC = () => {
     }
     setDraggedLetters([]);
   };
+  
+  const resetDraggedLetters = () => {
+    setDraggedLetters([])
+  }
 
   useEffect(() => {
     setCards(generateGrid(colorMap));
@@ -46,7 +51,7 @@ const Grid: React.FC = () => {
   return (
     <>
       <Board word={draggedLetters.join("")} score={score} />
-      <StyledGrid>
+      <StyledGrid ref={gridRef} onMouseLeave={resetDraggedLetters}>
         {cards.map((row, rowIndex) => (
           <StyledGridRow key={`rowIndex-${rowIndex}`}>
             {row.map((card) => (
