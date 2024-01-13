@@ -5,4 +5,5 @@ export type CardProps = {
   onDragStart?: (letter: string) => void;
   onDragOver?: (letter: string) => void;
   onDragEnd?: () => void;
+  onCardDragStart?: () => void;
 };

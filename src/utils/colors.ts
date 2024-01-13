@@ -30,3 +30,5 @@ export const CARD_COLOURS = [
   "#A52A2A",
   "#008080",
 ];
+
+export const BOARD_COLOURS = ["#00FB0B"];

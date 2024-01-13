@@ -1,5 +1,6 @@
 import { StyledCard } from "./Card.styles.ts";
 import { CardProps } from "./Card.types.ts";
+import { state$ } from "../../store/store.ts";
 
 const Card = ({
   letter,
@@ -7,10 +8,15 @@ const Card = ({
   onDragStart,
   onDragOver,
   onDragEnd,
+  onCardDragStart,
 }: CardProps) => {
+  const setDragging = state$.actions.isDragging.set;
+
   const handleMouseDown = () => {
-    if (onDragStart) {
+    if (onDragStart && onCardDragStart) {
+      onCardDragStart();
       onDragStart(letter);
+      setDragging(true);
     }
   };
 
@@ -23,6 +29,7 @@ const Card = ({
   const handleMouseUp = () => {
     if (onDragEnd) {
       onDragEnd();
+      setDragging(false);
     }
   };
 

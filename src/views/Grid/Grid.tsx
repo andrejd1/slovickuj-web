@@ -1,57 +1,68 @@
-import React, {useEffect, useState} from "react";
-import {StyledGrid, StyledGridRow} from "./Grid.styles.ts";
+import React from "react";
+import { StyledGrid, StyledGridRow } from "./Grid.styles.ts";
 import Card from "../../components/Card/Card.tsx";
-import {calculateScore, generateColorMap, generateGrid} from "../../utils/generators.ts";
-import {CZECH_VOCABULARY} from "../../vocabularies/cs_vocabulary.ts";
+import { calculateScore } from "../../utils/generators.ts";
+import { CZECH_VOCABULARY } from "../../vocabularies/cs_vocabulary.ts";
 import Board from "../../components/Board/Board.tsx";
-
-const colorMap = generateColorMap();
+import { state$ } from "../../store/store.ts";
 
 const Grid: React.FC = () => {
-  const [cards, setCards] = useState(generateGrid(colorMap));
-  const [draggedLetters, setDraggedLetters] = useState<string[]>([]);
-  const [usedWords, setUsedWords] = useState<string[]>([]);
-  const [score, setScore] = useState<number>(0);
+  const cards = state$.actions.cards;
+  const draggedLetters = state$.actions.draggedLetters;
+  const usedWords = state$.actions.usedWords;
+  const allWords = state$.actions.allWords;
+  const score = state$.actions.score;
+  const lastScoreIncrement = state$.actions.lastScoreIncrement;
 
   const handleDragStart = (letter: string) => {
-    setDraggedLetters([letter]);
+    draggedLetters.set([letter]);
   };
 
   const handleDragOver = (letter: string) => {
-    if (draggedLetters.length > 0) {
-      setDraggedLetters([...draggedLetters, letter]);
+    if (draggedLetters.get().length > 0) {
+      draggedLetters.set([...draggedLetters.get(), letter]);
     }
   };
 
   const handleDragEnd = () => {
     const findWord = CZECH_VOCABULARY.find(
-      (word) => word.toUpperCase() === draggedLetters.join(""),
+      (word) => word.toUpperCase() === draggedLetters.peek().join(""),
     );
     if (findWord) {
-      setUsedWords([...usedWords, findWord]);
-      const findUsedWord = usedWords.find((word) => word === findWord);
-      if (!findUsedWord) {
-        setScore((prev) => prev + calculateScore(findWord));
+      const findUsedWord = usedWords
+        .peek()
+        .find((word) => word.toUpperCase() === draggedLetters.peek().join(""));
+      if (findUsedWord === undefined) {
+        usedWords.set([...usedWords.get(), findWord]);
+        lastScoreIncrement.set(calculateScore(findWord));
+        score.set((prev) => prev + calculateScore(findWord));
       }
-    } else {
-      console.log(draggedLetters.join());
     }
-    setDraggedLetters([]);
+    allWords.set([...allWords.get(), draggedLetters.peek().join("")]);
+    draggedLetters.set([]);
   };
-  
-  const resetDraggedLetters = () => {
-    setDraggedLetters([])
-  }
 
-  useEffect(() => {
-    setCards(generateGrid(colorMap));
-  }, []);
+  const handleCardDragStart = (letter: string) => {
+    const indexOfLetter = draggedLetters.get().indexOf(letter);
+    if (indexOfLetter !== -1) {
+      // If the letter is found in the current dragged path,
+      // remove the letters after this letter in the path
+      draggedLetters.set(draggedLetters.get().slice(0, indexOfLetter + 1));
+    } else {
+      // If the letter is not found, start a new dragged path
+      draggedLetters.set([letter]);
+    }
+  };
+
+  const resetDraggedLetters = () => {
+    draggedLetters.set([]);
+  };
 
   return (
     <>
-      <Board word={draggedLetters.join("")} score={score} />
+      <Board />
       <StyledGrid onMouseLeave={resetDraggedLetters}>
-        {cards.map((row, rowIndex) => (
+        {cards.get().map((row, rowIndex) => (
           <StyledGridRow key={`rowIndex-${rowIndex}`}>
             {row.map((card) => (
               <Card
@@ -62,6 +73,7 @@ const Grid: React.FC = () => {
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
+                onCardDragStart={() => handleCardDragStart(card.letter)}
               />
             ))}
           </StyledGridRow>
