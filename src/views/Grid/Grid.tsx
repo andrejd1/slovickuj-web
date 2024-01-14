@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyledGrid,
   StyledGridContainer,
@@ -12,14 +12,25 @@ import { state$ } from "../../store/store.ts";
 import WordsTable from "../../components/TableWord/WordsTable.tsx";
 import { getUniqueElementsFromArrays } from "../../utils/helpers.ts";
 
-const cards = state$.actions.cards;
-const draggedLetters = state$.actions.draggedLetters;
-const usedWords = state$.actions.usedWords;
-const allWords = state$.actions.allWords;
-const score = state$.actions.score;
-const lastScoreIncrement = state$.actions.lastScoreIncrement;
+const cards = state$.ui.cards;
+const draggedLetters = state$.words.draggedLetters;
+const usedWords = state$.words.usedWords;
+const allWords = state$.words.allWords;
+const score = state$.score.score;
+const lastScoreIncrement = state$.score.lastScoreIncrement;
+const seconds = state$.timer.seconds;
 
 const Grid: React.FC = () => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Decrease the seconds by 1
+      if (seconds.get() !== 0) seconds.set((prevSeconds) => prevSeconds - 1);
+    }, 1000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []);
+
   const handleDragStart = (letter: string) => {
     draggedLetters.set([letter]);
   };
@@ -49,18 +60,6 @@ const Grid: React.FC = () => {
     draggedLetters.set([]);
   };
 
-  const handleCardDragStart = (letter: string) => {
-    const indexOfLetter = draggedLetters.get().indexOf(letter);
-    if (indexOfLetter !== -1) {
-      // If the letter is found in the current dragged path,
-      // remove the letters after this letter in the path
-      draggedLetters.set(draggedLetters.get().slice(0, indexOfLetter + 1));
-    } else {
-      // If the letter is not found, start a new dragged path
-      draggedLetters.set([letter]);
-    }
-  };
-
   const resetDraggedLetters = () => {
     draggedLetters.set([]);
   };
@@ -82,11 +81,11 @@ const Grid: React.FC = () => {
                   key={`cardIndex-${card.id}`}
                   id={card.id}
                   color={card.color}
+                  disable={seconds.get() === 0}
                   letter={card.letter}
                   onDragStart={handleDragStart}
                   onDragOver={handleDragOver}
                   onDragEnd={handleDragEnd}
-                  onCardDragStart={() => handleCardDragStart(card.letter)}
                 />
               ))}
             </StyledGridRow>

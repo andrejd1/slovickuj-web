@@ -44,7 +44,12 @@ export const generateGrid = (colorMap: {
       }
 
       const color = colorMap[selectedLetter];
-      row.push({ id: i * ROWS + j, letter: selectedLetter, color });
+      row.push({
+        id: i * ROWS + j,
+        letter: selectedLetter,
+        color,
+        disable: false,
+      });
     }
     grid.push(row);
   }

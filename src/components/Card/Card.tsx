@@ -6,27 +6,26 @@ const setDragging = state$.actions.isDragging.set;
 const Card = ({
   letter,
   color,
+  disable,
   onDragStart,
   onDragOver,
   onDragEnd,
-  onCardDragStart,
 }: CardProps) => {
   const handleMouseDown = () => {
-    if (onDragStart && onCardDragStart) {
-      onCardDragStart();
+    if (onDragStart && !disable) {
       onDragStart(letter);
       setDragging(true);
     }
   };
 
   const handleMouseOver = () => {
-    if (onDragOver) {
+    if (onDragOver && !disable) {
       onDragOver(letter);
     }
   };
 
   const handleMouseUp = () => {
-    if (onDragEnd) {
+    if (onDragEnd && !disable) {
       onDragEnd();
       setDragging(false);
     }
@@ -34,11 +33,11 @@ const Card = ({
 
   return (
     <StyledCard
-      $color={color}
+      $color={disable ? "gray" : color}
       onMouseDown={handleMouseDown}
       onMouseOver={handleMouseOver}
       onMouseUp={handleMouseUp}
-      whileHover={{ scale: 1.2 }}
+      whileHover={{ scale: disable ? 1 : 1.2 }}
     >
       {letter}
     </StyledCard>

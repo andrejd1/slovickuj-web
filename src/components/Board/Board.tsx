@@ -3,32 +3,49 @@ import {
   StyledBoard,
   StyledBoardInvalidH3,
   StyledBoardScoreIncrement,
+  StyledBoardScoreProgressBar,
+  StyledBoardTimerH3,
 } from "./Board.styles.ts";
 import { state$ } from "../../store/store.ts";
 import { motion } from "framer-motion";
 
+const seconds = state$.timer.seconds;
+const limit = state$.timer.limit;
+
 const Board: React.FC = () => {
-  const word = state$.actions.draggedLetters.get().join("");
-  const allWords = state$.actions.allWords.peek();
+  const isLastTenSeconds = seconds.get() <= 10;
+  const word = state$.words.draggedLetters.get().join("");
+  const allWords = state$.words.allWords.peek();
   const lastWord = allWords.length > 0 && allWords[allWords.length - 1];
-  const usedWords = state$.actions.usedWords.peek();
+  const usedWords = state$.words.usedWords.peek();
   const lastUsedWord = usedWords.length > 0 && usedWords[usedWords.length - 1];
   const isLastWordValid =
     lastUsedWord === lastWord &&
     typeof lastUsedWord === "string" &&
     typeof lastWord === "string";
-  const score = state$.actions.score.get();
-  const lastScoreIncrement = state$.actions.lastScoreIncrement.peek();
+  const score = state$.score.score.get();
+  const lastScoreIncrement = state$.score.lastScoreIncrement.peek();
   const isDragging = state$.actions.isDragging.get();
+
+  const breathingVariants = {
+    breatheIn: { scale: isLastTenSeconds ? 1.5 : 1 },
+    breatheOut: { scale: 1 },
+  };
+
+  const breathingTransition = {
+    duration: 0.5,
+    repeat: 20,
+    repeatType: "reverse" as "loop",
+  };
 
   const renderIncrementIndicator = () => {
     if (lastWord && !isDragging && isLastWordValid) {
       return (
         <StyledBoardScoreIncrement
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          initial={{ opacity: 0, scale: 0.5, y: 100 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-        >{`+${lastScoreIncrement}`}</StyledBoardScoreIncrement>
+        >{`${lastWord} +${lastScoreIncrement}`}</StyledBoardScoreIncrement>
       );
     } else {
       return null;
@@ -37,7 +54,17 @@ const Board: React.FC = () => {
 
   return (
     <StyledBoard>
-      <h3>Slovo: </h3>
+      <StyledBoardScoreProgressBar
+        $percent={(seconds.get() / limit.get()) * 100}
+      />
+      <StyledBoardTimerH3
+        variants={breathingVariants}
+        initial="breatheOut"
+        animate="breatheIn"
+        exit="breatheOut"
+        transition={breathingTransition}
+        $color={isLastTenSeconds ? "red" : "black"}
+      >{`Čas: ${seconds.get()}`}</StyledBoardTimerH3>
       {lastWord && !isLastWordValid && !isDragging ? (
         <StyledBoardInvalidH3
           initial={{ opacity: 0, scale: 0.5 }}

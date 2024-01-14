@@ -6,12 +6,13 @@ export const StyledWordsTable = styled.aside`
   flex-wrap: nowrap;
   flex-direction: column;
   min-width: 5rem;
-  max-height: 39rem;
+  max-height: 37rem;
   padding: 0 2rem;
   border-radius: 0.5rem;
 `;
 export const StyledWordsTableTitle = styled(motion.h3)`
   padding: 0.5rem;
+  margin-top: 0;
   font-weight: 600;
 `;
 export const StyledWordsTableWordContainer = styled.div`

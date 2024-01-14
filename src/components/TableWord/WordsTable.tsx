@@ -5,13 +5,20 @@ import {
   StyledWordsTableWordContainer,
 } from "./WordsTable.styles.ts";
 import { WordsTableProps } from "./WordsTable.types.ts";
+import { useEffect, useState } from "react";
 
 const WordsTable = ({ title, words, wordsColor }: WordsTableProps) => {
+  const [reverseWordsArray, setReverseWordsArray] = useState<string[]>([]);
+
+  useEffect(() => {
+    setReverseWordsArray([...words].reverse());
+  }, [words]);
+
   return (
     <StyledWordsTable>
       <StyledWordsTableTitle>{title}</StyledWordsTableTitle>
       <StyledWordsTableWordContainer>
-        {words.map((word) => (
+        {reverseWordsArray.map((word) => (
           <StyledWordsTableWord
             key={word}
             initial={{ opacity: 0, scale: 0.5 }}
