@@ -72,7 +72,7 @@ const Board: React.FC = () => {
           transition={{ duration: 0.5 }}
         >{`${lastWord} není validní`}</StyledBoardInvalidH3>
       ) : (
-        <h3>{word}</h3>
+        <h3>{word.length > 0 ? word : "Tahej písmena"}</h3>
       )}
       <motion.h3
         initial={{ opacity: 0, scale: 0.5 }}

@@ -14,6 +14,9 @@ export const StyledBoard = styled.div`
 
   @media only screen and ${device.mobile} {
     flex-direction: column;
+    h3 {
+      margin: 0.25rem 0;
+    }
   }
 `;
 export const StyledBoardScoreProgressBar = styled(motion.div)<{
