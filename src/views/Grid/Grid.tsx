@@ -12,6 +12,8 @@ import { state$ } from "../../store/store.ts";
 import WordsTable from "../../components/TableWord/WordsTable.tsx";
 import { getUniqueElementsFromArrays } from "../../utils/helpers.ts";
 import { COLUMNS } from "../../utils/const.ts";
+import { useDeviceSize } from "../../hooks/useDeviceSize.ts";
+import { breakpointSize } from "../../ui/breakpoints.ts";
 
 const cards = state$.ui.cards;
 const draggedLetters = state$.words.draggedLetters;
@@ -22,6 +24,9 @@ const lastScoreIncrement = state$.score.lastScoreIncrement;
 const seconds = state$.timer.seconds;
 
 const Grid: React.FC = () => {
+  const { windowWidth } = useDeviceSize();
+  const isTabletWidth = windowWidth < breakpointSize.tablet;
+
   useEffect(() => {
     const interval = setInterval(() => {
       // Decrease the seconds by 1
@@ -31,6 +36,20 @@ const Grid: React.FC = () => {
     // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (isTabletWidth) {
+      document.addEventListener("touchmove", function (event) {
+        event.preventDefault();
+      });
+
+      return () => {
+        document.removeEventListener("touchmove", function (event) {
+          event.preventDefault();
+        });
+      };
+    }
+  }, [isTabletWidth, windowWidth]);
 
   const handleDragStart = (letter: string) => {
     draggedLetters.set([letter]);
