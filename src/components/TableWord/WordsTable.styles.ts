@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { device } from "../../ui/breakpoints.ts";
 
 export const StyledWordsTable = styled.aside`
   display: flex;
@@ -9,6 +10,10 @@ export const StyledWordsTable = styled.aside`
   max-height: 37rem;
   padding: 0 2rem;
   border-radius: 0.5rem;
+
+  @media only screen and ${device.laptop} {
+    display: none;
+  }
 `;
 export const StyledWordsTableTitle = styled(motion.h3)`
   padding: 0.5rem;

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { device } from "../../ui/breakpoints.ts";
 
 export const StyledBoard = styled.div`
   position: relative;
@@ -10,6 +11,10 @@ export const StyledBoard = styled.div`
   border-radius: 0.5rem;
   padding: 0.5rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+  @media only screen and ${device.mobile} {
+    flex-direction: column;
+  }
 `;
 export const StyledBoardScoreProgressBar = styled(motion.div)<{
   $percent: number;

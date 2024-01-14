@@ -2,7 +2,7 @@ import { CardProps } from "../components/Card/Card.types.ts";
 import { CZECH_ALPHABET } from "../alphabet/cs_alphabet.ts";
 import { CARD_COLOURS } from "./colors.ts";
 import { czechLetterScores } from "../alphabet/cs_alphabet_score.ts";
-import { ROWS } from "./const.ts";
+import { COLUMNS, ROWS } from "./const.ts";
 export const generateColorMap = () => {
   const colorMap: { [key: string]: string } = {};
 
@@ -26,7 +26,7 @@ export const generateGrid = (colorMap: {
     0,
   );
 
-  for (let i = 0; i < ROWS; i++) {
+  for (let i = 0; i < COLUMNS; i++) {
     const row: CardProps[] = [];
     for (let j = 0; j < ROWS; j++) {
       // Generate a random number to determine the letter based on probability

@@ -34,9 +34,9 @@ const Card = ({
   return (
     <StyledCard
       $color={disable ? "gray" : color}
-      onMouseDown={handleMouseDown}
-      onMouseOver={handleMouseOver}
-      onMouseUp={handleMouseUp}
+      onPointerDown={handleMouseDown}
+      onPointerOver={handleMouseOver}
+      onPointerUp={handleMouseUp}
       whileHover={{ scale: disable ? 1 : 1.2 }}
     >
       {letter}

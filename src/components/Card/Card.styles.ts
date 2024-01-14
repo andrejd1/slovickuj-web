@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { device } from "../../ui/breakpoints.ts";
 
 type StyledCardType = {
   $color: string;
@@ -21,5 +22,10 @@ export const StyledCard = styled(motion.div)<StyledCardType>`
   }
   &:last-child {
     margin-bottom: 0;
+  }
+
+  @media only screen and ${device.mobile} {
+    padding: 0 0.75rem;
+    font-size: 2rem;
   }
 `;

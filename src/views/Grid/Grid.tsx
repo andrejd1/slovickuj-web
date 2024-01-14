@@ -11,6 +11,7 @@ import Board from "../../components/Board/Board.tsx";
 import { state$ } from "../../store/store.ts";
 import WordsTable from "../../components/TableWord/WordsTable.tsx";
 import { getUniqueElementsFromArrays } from "../../utils/helpers.ts";
+import { COLUMNS } from "../../utils/const.ts";
 
 const cards = state$.ui.cards;
 const draggedLetters = state$.words.draggedLetters;
@@ -73,7 +74,7 @@ const Grid: React.FC = () => {
           words={getUniqueElementsFromArrays(usedWords.get(), allWords.get())}
           wordsColor={"red"}
         />
-        <StyledGrid onMouseLeave={resetDraggedLetters}>
+        <StyledGrid onMouseLeave={resetDraggedLetters} $columns={COLUMNS}>
           {cards.get().map((row, rowIndex) => (
             <StyledGridRow key={`rowIndex-${rowIndex}`}>
               {row.map((card) => (

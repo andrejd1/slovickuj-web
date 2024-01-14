@@ -9,9 +9,9 @@ export const StyledGridContainer = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 `;
-export const StyledGrid = styled.div`
+export const StyledGrid = styled.div<{ $columns: number }>`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(${(props) => props.$columns}, 1fr);
   margin: 0.5rem;
   gap: 1rem;
 `;
